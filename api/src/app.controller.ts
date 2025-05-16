@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { HealthCheckResult } from '@nestjs/terminus';
 
@@ -10,42 +10,42 @@ export class AppController {
 
   @Get('health')
   @ApiOperation({ summary: 'Check the health status of the application' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'The health check was successful',
     schema: {
       type: 'object',
       properties: {
         status: { type: 'string' },
-        info: { 
+        info: {
           type: 'object',
           additionalProperties: {
             type: 'object',
             properties: {
-              status: { type: 'string' }
-            }
-          }
+              status: { type: 'string' },
+            },
+          },
         },
-        error: { 
+        error: {
           type: 'object',
           additionalProperties: {
             type: 'object',
             properties: {
-              status: { type: 'string' }
-            }
-          }
+              status: { type: 'string' },
+            },
+          },
         },
-        details: { 
+        details: {
           type: 'object',
           additionalProperties: {
             type: 'object',
             properties: {
-              status: { type: 'string' }
-            }
-          }
-        }
-      }
-    }
+              status: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 503, description: 'The service is unavailable' })
   checkHealth(): Promise<HealthCheckResult> {
@@ -54,19 +54,19 @@ export class AppController {
 
   @Get('info')
   @ApiOperation({ summary: 'Get application information' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Application information',
     schema: {
       type: 'object',
       properties: {
         name: { type: 'string' },
         version: { type: 'string' },
-        environment: { type: 'string' }
-      }
-    }
+        environment: { type: 'string' },
+      },
+    },
   })
-  getAppInfo() {
+  getAppInfo(): { name: string; version: string; environment: string } {
     return this.appService.getAppInfo();
   }
 }
