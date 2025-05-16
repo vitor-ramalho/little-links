@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check linting
+        run: npm run lint:all:check
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Build
+        run: npm run build
+  
+  # This job could be expanded later to deploy to your hosting platform
+  # You would add deployment steps based on where you're hosting the API
+  deploy:
+    name: Deploy API
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deployment preparation
+        run: echo "Deployment would happen here"
