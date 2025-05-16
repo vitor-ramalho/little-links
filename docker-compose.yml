@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: little_link
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Configurações para melhor desempenho em servidor potente
+    command: >
+      postgres 
+      -c shared_buffers=1GB 
+      -c effective_cache_size=3GB 
+      -c work_mem=64MB 
+      -c maintenance_work_mem=512MB
+      -c max_connections=200
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: little_link
+      JWT_SECRET: your_jwt_secret
+      JWT_EXPIRATION: 3600
+      PORT: 3000
+      NODE_ENV: development
+      BASE_URL: http://localhost:3000
+      # Configurações para escalabilidade vertical
+      NODE_OPTIONS: "--max-old-space-size=4096"
+      DB_POOL_SIZE: "30"
+      ENABLE_MONITORING: "true"
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    # Configuração para aplicar limites adequados para escalabilidade vertical
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+
+volumes:
+  postgres_data:
