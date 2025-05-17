@@ -2,7 +2,6 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from '@nestjs/common';
 
-
 @Injectable()
 export class PerformanceMonitorMiddleware implements NestMiddleware {
   private readonly logger = new Logger('PerformanceMonitor');
