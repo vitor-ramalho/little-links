@@ -6,12 +6,14 @@ import { Repository } from 'typeorm';
 import { LinksService } from './links.service';
 import { Link } from './entities/link.entity';
 import { Analytics } from './entities/analytics.entity';
+import { QrCodeService } from './services/qr-code.service';
 
 describe('LinksService', () => {
   let service: LinksService;
   let _linkRepository: Repository<Link>;
   let _analyticsRepository: Repository<Analytics>;
   let _configService: ConfigService;
+  let _qrCodeService: QrCodeService;
 
   const mockLinkRepository = {
     findOne: jest.fn(),
@@ -32,6 +34,11 @@ describe('LinksService', () => {
     get: jest.fn(),
   };
 
+  const mockQrCodeService = {
+    generateQRCode: jest.fn(),
+    getQRCodeUrl: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -48,6 +55,10 @@ describe('LinksService', () => {
           provide: ConfigService,
           useValue: mockConfigService,
         },
+        {
+          provide: QrCodeService,
+          useValue: mockQrCodeService,
+        },
       ],
     }).compile();
 
@@ -57,6 +68,7 @@ describe('LinksService', () => {
       getRepositoryToken(Analytics),
     );
     _configService = module.get<ConfigService>(ConfigService);
+    _qrCodeService = module.get<QrCodeService>(QrCodeService);
   });
 
   afterEach(() => {

@@ -34,7 +34,7 @@ const urlSchema = z.object({
   tags: z.array(z.string()).optional()
 });
 
-type FormState = {
+export type FormState = {
   errors?: {
     url?: string[];
     customSlug?: string[];

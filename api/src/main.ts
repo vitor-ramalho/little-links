@@ -24,8 +24,13 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  // Enable CORS
-  app.enableCors();
+  // Enable CORS with specific options
+  app.enableCors({
+    origin: true, // Allow all origins or specify with string/array: 'http://localhost:3001'
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Accept,Authorization',
+    credentials: true, // Allow cookies to be sent with requests
+  });
 
   // API prefix with exclusion for redirection routes
   app.setGlobalPrefix('api', {

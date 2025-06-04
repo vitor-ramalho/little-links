@@ -29,6 +29,18 @@ export class Analytics {
   @Column({ nullable: true })
   referrer: string;
 
+  @Column({ nullable: true })
+  source: string;
+
+  @Column({ nullable: true })
+  browser: string;
+
+  @Column({ nullable: true })
+  os: string;
+
+  @Column({ nullable: true })
+  device: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }

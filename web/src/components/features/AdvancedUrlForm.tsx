@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { shortenUrl } from '@/app/actions';
+import { useState, useEffect, useCallback } from 'react';
+import { shortenUrl, type FormState } from '@/app/actions';
 import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,7 +55,7 @@ export function AdvancedUrlForm({
   onSuccess 
 }: AdvancedUrlFormProps) {
   // State for URL shortening form
-  const initialState = { errors: {}, message: '', success: false, data: undefined };
+  const initialState: FormState = { errors: {}, message: '', success: false, data: undefined };
   const [formState, formAction] = useFormState(shortenUrl, initialState);
   
   // Advanced options state
@@ -66,7 +66,7 @@ export function AdvancedUrlForm({
   const [tagInput, setTagInput] = useState('');
   
   // Handle successful URL creation
-  const handleGenerateSuccess = (data: CreateUrlResponse) => {
+  const handleGenerateSuccess = useCallback((data: CreateUrlResponse) => {
     if (onSuccess) {
       onSuccess(data);
     }
@@ -81,7 +81,14 @@ export function AdvancedUrlForm({
         },
       },
     });
-  };
+  }, [onSuccess]);
+  
+  // Check for successful URL creation in formState and handle it
+  useEffect(() => {
+    if (formState.success && formState.data) {
+      handleGenerateSuccess(formState.data);
+    }
+  }, [formState, handleGenerateSuccess]);
   
   // Handle adding a tag
   const addTag = () => {
@@ -130,14 +137,7 @@ export function AdvancedUrlForm({
     }
     
     // Call the original form action
-    const result = await formAction(formData);
-    
-    // Check if successful
-    if (result.success && result.data) {
-      handleGenerateSuccess(result.data);
-    }
-    
-    return result;
+    formAction(formData);
   };
   
   return (

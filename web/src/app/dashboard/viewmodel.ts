@@ -2,6 +2,8 @@
 import { cookies } from "next/headers";
 import { Url, formatUrls } from "@/models/url.model";
 import { UrlService } from "@/services/url.service";
+import { AnalyticsService } from "@/services/analytics.service";
+import { DashboardAnalytics } from "@/models/analytics.model";
 
 export async function dashboardViewModel() {
   try {
@@ -11,17 +13,28 @@ export async function dashboardViewModel() {
     
     // Fetch user's URLs using the token
     let urls: Url[] = [];
+    let analyticsData: DashboardAnalytics | null = null;
     
     if (token) {
-      console.log({token})
-      urls = await UrlService.getUserUrls(token);
+      // Fetch URLs and analytics data concurrently
+      const [urlsResult, analyticsResult] = await Promise.all([
+        UrlService.getUserUrls(token),
+        AnalyticsService.getDashboardAnalytics(token, 'week')
+          .catch(error => {
+            console.error('Error fetching analytics:', error);
+            return null;
+          })
+      ]);
+      
+      urls = urlsResult;
+      analyticsData = analyticsResult;
     }
     
     // Transform data for the view
     const formattedUrls = formatUrls(urls);
     
-    // Calculate statistics
-    const totalClicks = urls.reduce((sum, url) => sum + url.clicks, 0);
+    // Calculate statistics (use analytics data if available)
+    const totalClicks = analyticsData?.totalClicks ?? urls.reduce((sum, url) => sum + url.clicks, 0);
     const totalUrls = urls.length;
     
     // Return view-ready data
@@ -32,6 +45,7 @@ export async function dashboardViewModel() {
         totalClicks,
         averageClicksPerUrl: totalUrls > 0 ? Math.round(totalClicks / totalUrls) : 0
       },
+      analytics: analyticsData,
       error: null
     };
   } catch (error) {
@@ -43,6 +57,7 @@ export async function dashboardViewModel() {
         totalClicks: 0,
         averageClicksPerUrl: 0
       },
+      analytics: null,
       error: 'Failed to load dashboard data'
     };
   }

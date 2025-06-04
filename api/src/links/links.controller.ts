@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Logger,
   Param,
   Patch,
   Post,
@@ -28,12 +29,14 @@ import {
 import { IRequestWithUser } from '../common/interfaces/request-with-user.interface';
 
 @ApiTags('links')
-@Controller()
+@Controller('links')
 export class LinksController {
+  private readonly logger = new Logger(LinksController.name);
+
   constructor(private readonly linksService: LinksService) {}
 
   // Create a short link - public endpoint (no authentication required)
-  @Post('public/links')
+  @Post('public')
   @ApiOperation({ summary: 'Create a short link without authentication' })
   @ApiBody({ type: CreateLinkDto })
   @ApiResponse({
@@ -44,12 +47,15 @@ export class LinksController {
   createPublic(
     @Body() createLinkDto: CreateLinkDto,
   ): Promise<Link & { shortUrl: string }> {
+    this.logger.log(
+      `Received public link request for URL: ${createLinkDto.originalUrl}`,
+    );
     return this.linksService.createPublic(createLinkDto);
   }
 
   // Create a short link - authentication required
   @UseGuards(JwtAuthGuard)
-  @Post('links')
+  @Post()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a short link' })
   @ApiBody({ type: CreateLinkDto })
@@ -68,7 +74,7 @@ export class LinksController {
 
   // List user's links
   @UseGuards(JwtAuthGuard)
-  @Get('links')
+  @Get()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all user links' })
   @ApiResponse({
@@ -81,7 +87,7 @@ export class LinksController {
 
   // Update a link
   @UseGuards(JwtAuthGuard)
-  @Patch('links/:id')
+  @Patch(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a link' })
   @ApiParam({ name: 'id', description: 'Link ID' })
@@ -98,7 +104,7 @@ export class LinksController {
 
   // Delete a link
   @UseGuards(JwtAuthGuard)
-  @Delete('links/:id')
+  @Delete(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a link' })
   @ApiParam({ name: 'id', description: 'Link ID' })

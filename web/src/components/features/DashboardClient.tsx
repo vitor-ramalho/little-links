@@ -12,6 +12,8 @@ import { ReferrerAnalytics } from '@/components/analytics/ReferrerAnalytics';
 import { TimeOfDayAnalytics } from '@/components/analytics/TimeOfDayAnalytics';
 import { AdvancedUrlForm } from '@/components/features/AdvancedUrlForm';
 import { CreateUrlResponse } from '@/models/url.model';
+import { DashboardAnalytics } from '@/models/analytics.model';
+import { AnalyticsService } from '@/services/analytics.service';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { 
@@ -33,12 +35,18 @@ interface DashboardClientProps {
     totalClicks: number;
     averageClicksPerUrl: number;
   };
+  analytics: DashboardAnalytics | null;
 }
 
-export function DashboardClient({ initialUrls, stats }: DashboardClientProps) {
+export function DashboardClient({ initialUrls, stats, analytics }: DashboardClientProps) {
   const [urls, setUrls] = useState<Url[]>(initialUrls);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
+  // Period state for future analytics filtering
+  // const [selectedPeriod, setSelectedPeriod] = useState<'day' | 'week' | 'month' | 'year'>('week');
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
+  const [dashboardAnalytics] = useState<DashboardAnalytics | null>(analytics);
+  const [linkAnalytics, setLinkAnalytics] = useState<LinkAnalytics | null>(null);
   
   // Filter URLs based on search query
   const filteredUrls = searchQuery 
@@ -76,6 +84,19 @@ export function DashboardClient({ initialUrls, stats }: DashboardClientProps) {
   // Show analytics for a specific link
   const handleOpenAnalytics = (id: string) => {
     setSelectedLinkId(id);
+    
+    // Fetch enhanced analytics data for this link
+    setIsLoadingAnalytics(true);
+    AnalyticsService.getLinkAnalytics(id, document.cookie.includes('auth_token') ? document.cookie.split('auth_token=')[1].split(';')[0] : '')
+      .then(data => {
+        // Store the link-specific analytics data
+        setLinkAnalytics(data);
+        setIsLoadingAnalytics(false);
+      })
+      .catch(error => {
+        console.error('Error fetching link analytics:', error);
+        setIsLoadingAnalytics(false);
+      });
   };
   
   // Calculate trends and metrics
@@ -245,11 +266,31 @@ export function DashboardClient({ initialUrls, stats }: DashboardClientProps) {
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ClicksChart urls={[selectedLink]} />
-                <GeoDistribution urls={[selectedLink]} />
-                <DeviceAnalytics urls={[selectedLink]} />
-                <ReferrerAnalytics urls={[selectedLink]} />
-                <TimeOfDayAnalytics urls={[selectedLink]} />
+                {isLoadingAnalytics ? (
+                  <div className="col-span-2 h-40 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>
+                ) : linkAnalytics ? (
+                  <>
+                    <ClicksChart analyticsData={linkAnalytics.clicksByDate} />
+                    <GeoDistribution analyticsData={linkAnalytics.geoDistribution} />
+                    <DeviceAnalytics 
+                      deviceAnalytics={linkAnalytics.deviceDistribution}
+                      browserAnalytics={linkAnalytics.browserDistribution}
+                      osAnalytics={linkAnalytics.osDistribution}
+                    />
+                    <ReferrerAnalytics analyticsData={linkAnalytics.referrerDistribution} />
+                    <TimeOfDayAnalytics analyticsData={linkAnalytics.hourDistribution} />
+                  </>
+                ) : (
+                  <>
+                    <ClicksChart urls={[selectedLink]} />
+                    <GeoDistribution urls={[selectedLink]} />
+                    <DeviceAnalytics urls={[selectedLink]} />
+                    <ReferrerAnalytics urls={[selectedLink]} />
+                    <TimeOfDayAnalytics urls={[selectedLink]} />
+                  </>
+                )}
               </div>
               
               {/* Single Link Card for selected link */}
@@ -312,20 +353,47 @@ export function DashboardClient({ initialUrls, stats }: DashboardClientProps) {
                 </TabsList>
                 
                 <TabsContent value="overview" className="space-y-6 pt-6">
-                  <ClicksChart urls={urls} />
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <GeoDistribution urls={urls} />
-                    <ReferrerAnalytics urls={urls} />
-                  </div>
+                  {dashboardAnalytics ? (
+                    <>
+                      <ClicksChart analyticsData={dashboardAnalytics.clicksByDate} />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <GeoDistribution analyticsData={dashboardAnalytics.geoDistribution} />
+                        <ReferrerAnalytics analyticsData={dashboardAnalytics.referrerDistribution} />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <ClicksChart urls={urls} />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <GeoDistribution urls={urls} />
+                        <ReferrerAnalytics urls={urls} />
+                      </div>
+                    </>
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="traffic" className="pt-6 space-y-6">
-                  <ClicksChart urls={urls} />
-                  <TimeOfDayAnalytics urls={urls} />
+                  {dashboardAnalytics ? (
+                    <>
+                      <ClicksChart analyticsData={dashboardAnalytics.clicksByDate} />
+                      <TimeOfDayAnalytics urls={urls} />
+                    </>
+                  ) : (
+                    <>
+                      <ClicksChart urls={urls} />
+                      <TimeOfDayAnalytics urls={urls} />
+                    </>
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="devices" className="pt-6">
-                  <DeviceAnalytics urls={urls} />
+                  {dashboardAnalytics ? (
+                    <DeviceAnalytics 
+                      deviceAnalytics={dashboardAnalytics.deviceDistribution}
+                    />
+                  ) : (
+                    <DeviceAnalytics urls={urls} />
+                  )}
                 </TabsContent>
               </Tabs>
             </>

@@ -38,6 +38,24 @@ export class Link {
   @OneToMany(() => Analytics, (analytics) => analytics.link)
   analytics: Analytics[];
 
+  @Column({ nullable: true })
+  customSlug: string;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  expiresAt: Date;
+
+  @Column({ nullable: true })
+  maxClicks: number;
+
+  @Column({ nullable: true })
+  password: string;
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
+
+  @Column({ nullable: true })
+  qrCodePath: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

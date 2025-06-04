@@ -6,9 +6,11 @@ import { toast } from 'sonner';
 
 interface CopyLinkButtonProps {
   url: string;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | null;
+  className?: string;
 }
 
-export function CopyLinkButton({ url }: CopyLinkButtonProps) {
+export function CopyLinkButton({ url, variant = "default", className = "" }: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -29,9 +31,10 @@ export function CopyLinkButton({ url }: CopyLinkButtonProps) {
   return (
     <Button
       size="sm"
-      variant="ghost"
+      variant={variant}
       onClick={copyToClipboard}
       title="Copy link"
+      className={className}
     >
       <svg 
         width="15" 

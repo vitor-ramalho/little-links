@@ -29,7 +29,7 @@ export default async function DashboardPage() {
   }
   
   // Get data from ViewModel
-  const { urls, stats, error } = await dashboardViewModel();
+  const { urls, stats, analytics, error } = await dashboardViewModel();
   
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -47,7 +47,8 @@ export default async function DashboardPage() {
       ) : (
         <DashboardClient 
           initialUrls={urls} 
-          stats={stats}
+          stats={stats} 
+          analytics={analytics}
         />
       )}
     </div>

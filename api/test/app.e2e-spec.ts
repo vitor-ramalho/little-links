@@ -37,8 +37,10 @@ describe('URL Shortener (e2e)', () => {
   }, 10000); // Increase timeout to 10 seconds
 
   // Test health endpoint
+
   describe('Health Check API', () => {
     it('/health (GET)', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return request(app.getHttpServer())
         .get('/health')
         .expect((res) => {
@@ -49,6 +51,7 @@ describe('URL Shortener (e2e)', () => {
     });
 
     it('/info (GET)', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return request(app.getHttpServer())
         .get('/info')
         .expect(200)
@@ -61,8 +64,10 @@ describe('URL Shortener (e2e)', () => {
   });
 
   // A simplified test for the links module
+
   describe('Links Module - Public Endpoint', () => {
     it('/public/links (POST) - Create public link', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return request(app.getHttpServer())
         .post('/public/links')
         .send({ originalUrl: 'https://example.com/test' })
