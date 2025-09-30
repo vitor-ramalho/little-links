@@ -9,6 +9,12 @@ import {
 } from 'typeorm';
 import { Link } from '../../links/entities/link.entity';
 
+export enum UserPlan {
+  FREE = 'FREE',
+  BASIC = 'BASIC',
+  PRO = 'PRO',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -25,6 +31,15 @@ export class User {
 
   @OneToMany(() => Link, (link) => link.user)
   links: Link[];
+
+  @Column({ type: 'enum', enum: UserPlan, default: UserPlan.FREE })
+  plan: UserPlan;
+
+  @Column({ nullable: true })
+  stripeCustomerId?: string;
+
+  @Column({ nullable: true })
+  stripeSubscriptionId?: string;
 
   @CreateDateColumn()
   createdAt: Date;

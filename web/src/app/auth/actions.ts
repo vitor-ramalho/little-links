@@ -54,10 +54,10 @@ export async function login(
   // Extract form data
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  
+
   // Validate form data
   const validationResult = loginSchema.safeParse({ email, password });
-  
+
   if (!validationResult.success) {
     return {
       errors: validationResult.error.flatten().fieldErrors,
@@ -65,7 +65,7 @@ export async function login(
       success: false,
     };
   }
-  
+
   try {
     // Send login request to API
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -75,7 +75,7 @@ export async function login(
       },
       body: JSON.stringify({ email, password }),
     });
-    
+
     if (!response.ok) {
       const error = await response.json();
       return {
@@ -83,10 +83,10 @@ export async function login(
         success: false,
       };
     }
-    
+
     // Get response data
     const data = await response.json();
-    
+
     // Store auth token and user data in cookies
     const cookieStore = await cookies();
     cookieStore.set('auth_token', data.accessToken, {
@@ -95,14 +95,14 @@ export async function login(
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
-    
+
     cookieStore.set('user', JSON.stringify(data.user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
-    
+
     // Return success response with token and user data
     // Client will handle the redirect
     return {
@@ -130,10 +130,10 @@ export async function register(
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  
+
   // Validate form data
   const validationResult = registerSchema.safeParse({ name, email, password });
-  
+
   if (!validationResult.success) {
     return {
       errors: validationResult.error.flatten().fieldErrors,
@@ -141,9 +141,12 @@ export async function register(
       success: false,
     };
   }
-  
+
+  console.log('API URL:', API_URL); // Debug log
+
   try {
     // Send register request to API
+    console.log('Making request to:', `${API_URL}/auth/register`); // Debug log
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -151,15 +154,29 @@ export async function register(
       },
       body: JSON.stringify({ name, email, password }),
     });
-    
+
+    console.log('Response status:', response.status); // Debug log
+    console.log('Response headers:', Object.fromEntries(response.headers.entries())); // Debug log
+
     if (!response.ok) {
-      const error = await response.json();
+      let error;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        error = await response.json();
+      } else {
+        // If it's not JSON (like HTML error page), get text
+        const text = await response.text();
+        console.log('Non-JSON response:', text.substring(0, 200)); // Log first 200 chars
+        error = { message: `Server error (${response.status})` };
+      }
+      
       return {
         message: error.message || 'Registration failed. Please try again.',
         success: false,
       };
     }
-    
+
     // Now we need to log in to get the auth token
     const loginResponse = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -168,17 +185,17 @@ export async function register(
       },
       body: JSON.stringify({ email, password }),
     });
-    
+
     if (!loginResponse.ok) {
       return {
         message: 'Account created but login failed. Please login manually.',
         success: true, // Still success because registration worked
       };
     }
-    
+
     // Get login data with token
     const loginData = await loginResponse.json();
-    
+
     // Store auth token and user data in cookies
     const cookieStore = await cookies();
     cookieStore.set('auth_token', loginData.accessToken, {
@@ -187,14 +204,14 @@ export async function register(
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
-    
+
     cookieStore.set('user', JSON.stringify(loginData.user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
-    
+
     // Return success response with token, user data, and redirect info
     // Client will handle the redirect
     return {
@@ -219,7 +236,7 @@ export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete('auth_token');
   cookieStore.delete('user');
-  
+
   // Redirect to homepage
   redirect('/');
 }

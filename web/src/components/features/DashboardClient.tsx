@@ -1,18 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Url } from '@/models/url.model';
 import { LinkCard } from '@/components/features/LinkCard';
 import { ClicksChart } from '@/components/analytics/ClicksChart';
-import { GeoDistribution } from '@/components/analytics/GeoDistribution';
-import { DeviceAnalytics } from '@/components/analytics/DeviceAnalytics';
 import { ReferrerAnalytics } from '@/components/analytics/ReferrerAnalytics';
 import { TimeOfDayAnalytics } from '@/components/analytics/TimeOfDayAnalytics';
 import { AdvancedUrlForm } from '@/components/features/AdvancedUrlForm';
 import { CreateUrlResponse } from '@/models/url.model';
-import { DashboardAnalytics } from '@/models/analytics.model';
+import { DashboardAnalytics, LinkAnalytics } from '@/models/analytics.model';
 import { AnalyticsService } from '@/services/analytics.service';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -265,30 +262,26 @@ export function DashboardClient({ initialUrls, stats, analytics }: DashboardClie
                 </Button>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-6">
                 {isLoadingAnalytics ? (
-                  <div className="col-span-2 h-40 flex items-center justify-center">
+                  <div className="h-40 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                   </div>
                 ) : linkAnalytics ? (
                   <>
                     <ClicksChart analyticsData={linkAnalytics.clicksByDate} />
-                    <GeoDistribution analyticsData={linkAnalytics.geoDistribution} />
-                    <DeviceAnalytics 
-                      deviceAnalytics={linkAnalytics.deviceDistribution}
-                      browserAnalytics={linkAnalytics.browserDistribution}
-                      osAnalytics={linkAnalytics.osDistribution}
-                    />
-                    <ReferrerAnalytics analyticsData={linkAnalytics.referrerDistribution} />
-                    <TimeOfDayAnalytics analyticsData={linkAnalytics.hourDistribution} />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <ReferrerAnalytics analyticsData={linkAnalytics.referrerDistribution} />
+                      <TimeOfDayAnalytics analyticsData={linkAnalytics.hourDistribution} />
+                    </div>
                   </>
                 ) : (
                   <>
                     <ClicksChart urls={[selectedLink]} />
-                    <GeoDistribution urls={[selectedLink]} />
-                    <DeviceAnalytics urls={[selectedLink]} />
-                    <ReferrerAnalytics urls={[selectedLink]} />
-                    <TimeOfDayAnalytics urls={[selectedLink]} />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <ReferrerAnalytics urls={[selectedLink]} />
+                      <TimeOfDayAnalytics urls={[selectedLink]} />
+                    </div>
                   </>
                 )}
               </div>
@@ -345,57 +338,32 @@ export function DashboardClient({ initialUrls, stats, analytics }: DashboardClie
             </>
           ) : (
             <>
-              <Tabs defaultValue="overview">
-                <TabsList className="grid grid-cols-3 w-full">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="traffic">Traffic</TabsTrigger>
-                  <TabsTrigger value="devices">Devices</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="overview" className="space-y-6 pt-6">
-                  {dashboardAnalytics ? (
-                    <>
-                      <ClicksChart analyticsData={dashboardAnalytics.clicksByDate} />
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <GeoDistribution analyticsData={dashboardAnalytics.geoDistribution} />
-                        <ReferrerAnalytics analyticsData={dashboardAnalytics.referrerDistribution} />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <ClicksChart urls={urls} />
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <GeoDistribution urls={urls} />
-                        <ReferrerAnalytics urls={urls} />
-                      </div>
-                    </>
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="traffic" className="pt-6 space-y-6">
-                  {dashboardAnalytics ? (
-                    <>
-                      <ClicksChart analyticsData={dashboardAnalytics.clicksByDate} />
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Analytics Overview</h2>
+                <p className="text-sm text-muted-foreground">
+                  Overall performance of all your links
+                </p>
+              </div>
+              
+              <div className="space-y-6">
+                {dashboardAnalytics ? (
+                  <>
+                    <ClicksChart analyticsData={dashboardAnalytics.clicksByDate} />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <TimeOfDayAnalytics urls={urls} />
-                    </>
-                  ) : (
-                    <>
-                      <ClicksChart urls={urls} />
+                      <ReferrerAnalytics urls={urls} />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <ClicksChart urls={urls} />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <TimeOfDayAnalytics urls={urls} />
-                    </>
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="devices" className="pt-6">
-                  {dashboardAnalytics ? (
-                    <DeviceAnalytics 
-                      deviceAnalytics={dashboardAnalytics.deviceDistribution}
-                    />
-                  ) : (
-                    <DeviceAnalytics urls={urls} />
-                  )}
-                </TabsContent>
-              </Tabs>
+                      <ReferrerAnalytics urls={urls} />
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           )}
         </div>

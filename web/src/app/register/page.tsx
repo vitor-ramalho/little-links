@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -37,7 +38,7 @@ export default function RegisterPage() {
   };
   
   // Use form state with the register action
-  const [state, formAction] = useFormState(register, initialState);
+  const [state, formAction] = useActionState(register, initialState);
   
   // Handle token storage and redirection
   const router = useRouter();
