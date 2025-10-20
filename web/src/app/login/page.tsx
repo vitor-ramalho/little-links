@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { useFormState, useFormStatus } from 'react-dom';
-import { useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 // LoginButton component with loading state
@@ -37,26 +37,26 @@ export default function LoginPage() {
   };
   
   // Use form state with the login action
-  const [state, formAction] = useFormState(login, initialState);
+  const [state, formAction] = useActionState(login, initialState);
   
-  // Handle token storage and redirection
+  // Handle successful login
   const router = useRouter();
 
   useEffect(() => {
-    if (state.token) {
+    if (state.success && state.token) {
+      // Store token in localStorage for client-side use
       localStorage.setItem('auth_token', state.token);
       
-      // If user data is available, save that too
       if (state.user) {
         localStorage.setItem('user', JSON.stringify(state.user));
       }
 
-      // Handle redirection if specified
+      // Redirect to dashboard
       if (state.redirectTo) {
         router.push(state.redirectTo);
       }
     }
-  }, [state.token, state.user, state.redirectTo, router]);
+  }, [state.success, state.token, state.user, state.redirectTo, router]);
   
   return (
     <div className="flex min-h-screen items-center justify-center px-4">

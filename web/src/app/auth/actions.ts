@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { User } from '@/models/user.model';
 
 // Environment variables
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || 'http://localhost:3000/api';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api`;
 
 // Validation schemas
 const loginSchema = z.object({
@@ -103,8 +103,7 @@ export async function login(
       path: '/',
     });
 
-    // Return success response with token and user data
-    // Client will handle the redirect
+    // Return success response - client will handle redirect
     return {
       success: true,
       message: 'Login successful!',
@@ -142,11 +141,8 @@ export async function register(
     };
   }
 
-  console.log('API URL:', API_URL); // Debug log
-
   try {
     // Send register request to API
-    console.log('Making request to:', `${API_URL}/auth/register`); // Debug log
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -155,9 +151,6 @@ export async function register(
       body: JSON.stringify({ name, email, password }),
     });
 
-    console.log('Response status:', response.status); // Debug log
-    console.log('Response headers:', Object.fromEntries(response.headers.entries())); // Debug log
-
     if (!response.ok) {
       let error;
       const contentType = response.headers.get('content-type');
@@ -165,9 +158,7 @@ export async function register(
       if (contentType && contentType.includes('application/json')) {
         error = await response.json();
       } else {
-        // If it's not JSON (like HTML error page), get text
-        const text = await response.text();
-        console.log('Non-JSON response:', text.substring(0, 200)); // Log first 200 chars
+        // If it's not JSON (like HTML error page)
         error = { message: `Server error (${response.status})` };
       }
       
@@ -212,8 +203,7 @@ export async function register(
       path: '/',
     });
 
-    // Return success response with token, user data, and redirect info
-    // Client will handle the redirect
+    // Return success response - client will handle redirect
     return {
       success: true,
       message: 'Registration successful!',

@@ -40,24 +40,26 @@ export default function RegisterPage() {
   // Use form state with the register action
   const [state, formAction] = useActionState(register, initialState);
   
-  // Handle token storage and redirection
+  // Handle successful registration
   const router = useRouter();
   
   useEffect(() => {
-    if (state.token) {
+    if (state.success && state.token) {
+      console.log('Registration successful, redirecting to dashboard...'); // Debug
+      
+      // Store token in localStorage for client-side use
       localStorage.setItem('auth_token', state.token);
       
-      // If user data is available, save that too
       if (state.user) {
         localStorage.setItem('user', JSON.stringify(state.user));
       }
       
-      // Handle redirection if specified
+      // Redirect to dashboard
       if (state.redirectTo) {
         router.push(state.redirectTo);
       }
     }
-  }, [state.token, state.user, state.redirectTo, router]);
+  }, [state.success, state.token, state.user, state.redirectTo, router]);
   
   return (
     <div className="flex min-h-screen items-center justify-center px-4">

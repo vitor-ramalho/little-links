@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 
 // Base metadata configuration
 const siteConfig = {
-  name: 'LittleLink',
+  name: 'Little Links',
   description: 'Simple, modern URL shortening with powerful analytics',
   url: 'https://ll.ink', // Replace with your actual domain
 };

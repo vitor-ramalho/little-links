@@ -63,7 +63,7 @@ export async function HeaderServer({ showNav = true }: HeaderServerProps) {
                 <Link href="/login">Sign In</Link>
               </Button>
               <Button asChild size="sm" className="rounded-full px-5 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white transition-all duration-300 shadow-md hover:shadow-lg">
-                <Link href="/register">Sign Up</Link>
+                <Link href="/register">Create account</Link>
               </Button>
             </div>
           )}

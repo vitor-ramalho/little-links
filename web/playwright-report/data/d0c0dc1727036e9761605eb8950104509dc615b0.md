@@ -1,0 +1,130 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "LittleLink" [ref=e5]:
+        - /url: /
+        - generic [ref=e6]: LittleLink
+      - generic [ref=e7]:
+        - button "Toggle theme" [ref=e8]:
+          - img [ref=e9]
+          - generic [ref=e11]: Toggle theme
+        - generic [ref=e13]:
+          - link "Sign In" [ref=e14]:
+            - /url: /login
+          - link "Create account" [ref=e15]:
+            - /url: /register
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - heading "Simplify your links, amplify your reach" [level=1] [ref=e20]:
+            - generic [ref=e21]: Simplify your links,
+            - generic [ref=e22]: amplify your reach
+          - paragraph [ref=e23]: Create short, memorable links that redirect anywhere on the web, with built-in analytics to track performance.
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - img "Globe icon" [ref=e27]
+              - generic [ref=e28]: Universal shortening
+            - generic [ref=e29]:
+              - img "Analytics icon" [ref=e31]
+              - generic [ref=e32]: Click analytics
+            - generic [ref=e33]:
+              - img "Link icon" [ref=e35]
+              - generic [ref=e36]: Custom links
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]: Shorten Your URL
+            - generic [ref=e41]: Enter a long URL to get a short link.
+          - generic [ref=e43]:
+            - textbox "URL must start with http:// or https://" [ref=e45]
+            - button "Shorten URL" [ref=e46]
+      - generic [ref=e47]:
+        - heading "Why choose LittleLink?" [level=2] [ref=e48]:
+          - generic [ref=e49]: Why choose LittleLink?
+        - paragraph [ref=e50]: A powerful URL shortening platform with all the features you need in a clean, simple interface.
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - img [ref=e54]
+            - heading "Simple & Fast" [level=3] [ref=e56]
+            - paragraph [ref=e57]: No complicated setup. Create short links instantly and share them anywhere with just a few clicks.
+          - generic [ref=e58]:
+            - img [ref=e60]
+            - heading "Detailed Analytics" [level=3] [ref=e62]
+            - paragraph [ref=e63]: Track clicks, geographic data, and referrers to optimize your links and understand your audience.
+          - generic [ref=e64]:
+            - img [ref=e66]
+            - heading "Custom Branding" [level=3] [ref=e68]
+            - paragraph [ref=e69]: Create memorable links with custom slugs that reflect your brand and increase recognition.
+  - contentinfo [ref=e70]:
+    - generic [ref=e71]:
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - link "LittleLink" [ref=e74]:
+            - /url: /
+            - generic [ref=e75]: LittleLink
+          - paragraph [ref=e76]: The simple, powerful URL shortening service for individuals and businesses.
+        - generic [ref=e77]:
+          - heading "Product" [level=3] [ref=e78]
+          - list [ref=e79]:
+            - listitem [ref=e80]:
+              - link "Features" [ref=e81]:
+                - /url: /features
+            - listitem [ref=e82]:
+              - link "Pricing" [ref=e83]:
+                - /url: /pricing
+            - listitem [ref=e84]:
+              - link "API" [ref=e85]:
+                - /url: /api
+        - generic [ref=e86]:
+          - heading "Company" [level=3] [ref=e87]
+          - list [ref=e88]:
+            - listitem [ref=e89]:
+              - link "About" [ref=e90]:
+                - /url: /about
+            - listitem [ref=e91]:
+              - link "Blog" [ref=e92]:
+                - /url: /blog
+            - listitem [ref=e93]:
+              - link "Contact" [ref=e94]:
+                - /url: /contact
+        - generic [ref=e95]:
+          - heading "Legal" [level=3] [ref=e96]
+          - list [ref=e97]:
+            - listitem [ref=e98]:
+              - link "Privacy" [ref=e99]:
+                - /url: /privacy
+            - listitem [ref=e100]:
+              - link "Terms" [ref=e101]:
+                - /url: /terms
+            - listitem [ref=e102]:
+              - link "Cookies" [ref=e103]:
+                - /url: /cookies
+      - generic [ref=e104]:
+        - paragraph [ref=e105]: © 2025 LittleLink. All rights reserved.
+        - generic [ref=e106]:
+          - link "Twitter" [ref=e107]:
+            - /url: https://twitter.com
+            - img [ref=e108]
+          - link "GitHub" [ref=e110]:
+            - /url: https://github.com
+            - img [ref=e111]
+          - link "LinkedIn" [ref=e113]:
+            - /url: https://linkedin.com
+            - img [ref=e114]
+  - region "Notifications alt+T"
+  - alert [ref=e116]
+  - generic [ref=e121] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e122] [cursor=pointer]:
+      - img [ref=e123] [cursor=pointer]
+    - generic [ref=e128] [cursor=pointer]:
+      - button "Open issues overlay" [ref=e129] [cursor=pointer]:
+        - generic [ref=e130] [cursor=pointer]:
+          - generic [ref=e131] [cursor=pointer]: "0"
+          - generic [ref=e132] [cursor=pointer]: "1"
+        - generic [ref=e133] [cursor=pointer]: Issue
+      - button "Collapse issues badge" [ref=e134] [cursor=pointer]:
+        - img [ref=e135] [cursor=pointer]
+```
