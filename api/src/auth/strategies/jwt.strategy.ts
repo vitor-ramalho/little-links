@@ -13,17 +13,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
 
   constructor(configService: ConfigService) {
-    let jwtSecret = configService.get<string>('JWT_SECRET');
+    const jwtSecret = configService.get<string>('JWT_SECRET');
+    
     if (!jwtSecret) {
-      jwtSecret = process.env.JWT_SECRET;
+      throw new Error('JWT_SECRET is not configured. Please check your .env file.');
     }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
     });
     
-    this.logger.log('JWT Strategy initialized with secret key');
+    this.logger.log('JWT Strategy initialized successfully');
   }
 
   validate(payload: IJwtPayload): { id: string; email: string } {

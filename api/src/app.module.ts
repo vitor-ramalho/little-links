@@ -18,7 +18,8 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig],
-      envFilePath: '.env',
+      envFilePath: ['.env', '../.env'],
+      expandVariables: true,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

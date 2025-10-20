@@ -6,7 +6,9 @@ import { Repository } from 'typeorm';
 import { LinksService } from './links.service';
 import { Link } from './entities/link.entity';
 import { Analytics } from './entities/analytics.entity';
-import { QrCodeService } from './services/qr-code.service';
+import { QrCodeService } from '../qrcode/services/qr-code.service';
+import { UserAgentService } from '../common/services/user-agent.service';
+import { AnalyticsService } from '../analytics/services/analytics.service';
 
 describe('LinksService', () => {
   let service: LinksService;
@@ -14,6 +16,8 @@ describe('LinksService', () => {
   let _analyticsRepository: Repository<Analytics>;
   let _configService: ConfigService;
   let _qrCodeService: QrCodeService;
+  let _userAgentService: UserAgentService;
+  let _analyticsService: AnalyticsService;
 
   const mockLinkRepository = {
     findOne: jest.fn(),
@@ -58,6 +62,22 @@ describe('LinksService', () => {
         {
           provide: QrCodeService,
           useValue: mockQrCodeService,
+        },
+        {
+          provide: UserAgentService,
+          useValue: {
+            parseUserAgent: jest.fn().mockReturnValue({
+              browser: 'Chrome',
+              os: 'Windows',
+              device: 'Desktop',
+            }),
+          },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            trackEvent: jest.fn().mockResolvedValue(undefined),
+          },
         },
       ],
     }).compile();

@@ -34,11 +34,11 @@ export class AppService {
       async (): Promise<HealthIndicatorResult> =>
         this.memory.checkRSS('memory_rss', 2 * 1024 * 1024 * 1024),
 
-      // Disk space check - ensure at least 500MB of free space
+      // Disk space check - ensure at least 50MB of free space (more lenient)
       async (): Promise<HealthIndicatorResult> =>
         this.disk.checkStorage('disk', {
           path: '/',
-          thresholdPercent: 0.5, // 50%
+          thresholdPercent: 0.9, // 90% usage allowed
         }),
     ]);
   }

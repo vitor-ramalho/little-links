@@ -6,10 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [
-    ConfigModule,
-    TypeOrmModule.forFeature([User]),
-  ],
+  imports: [ConfigModule, TypeOrmModule.forFeature([User])],
   providers: [StripeService],
   controllers: [StripeController],
   exports: [StripeService],
